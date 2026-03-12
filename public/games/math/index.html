@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>爷爷的算数挑战：10道题</title>
+  <title>奶奶的算数挑战：10道题</title>
 
   <style>
     :root{
@@ -209,7 +209,7 @@
 
 <body>
   <header>
-    <h1>🏆 爷爷的算数挑战</h1>
+    <h1>🏆 奶奶的算数挑战</h1>
     <div class="progress-container">
       <div class="progress-bar" id="progress-bar"></div>
       <div class="progress-text" id="progress-text">进度：0 / 10</div>
@@ -357,7 +357,7 @@
     }
 
     function showHint(){
-      // 给爷爷防卡关：直接显示正确答案但不计分
+      // 给奶奶防卡关：直接显示正确答案但不计分
       speak("提示来了");
       userInput = String(currentAnswer);
       updateDisplay();
@@ -425,7 +425,7 @@
         `本次得分：<span style="color:#E65100;">${score}</span> 分<br>` +
         `答对：${correctCount} 题`;
 
-      setTimeout(() => speak("爷爷真棒！挑战完成！"), 450);
+      setTimeout(() => speak("奶奶真棒！挑战完成！"), 450);
       document.getElementById('finish-overlay').style.display = 'flex';
     }
 

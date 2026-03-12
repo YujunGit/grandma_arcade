@@ -1,9 +1,9 @@
-# Grandpa Arcade (爷爷的游戏厅) 🎮❤️
+# Grandma Arcade (奶奶的游戏厅) 🎮❤️
 <p align="center">
-  <img src="public/og.png" alt="爷爷的游戏厅像素插画" width="720" />
+  <img src="public/og.png" alt="奶奶的游戏厅像素插画" width="720" />
 </p>
 
-A tiny, warm web arcade made for my 96-year-old grandpa.
+A tiny, warm web arcade made for my 96-year-old grandma.
 
 **Big buttons. Big fonts. Simple rules. No ads.**  
 Just a calm place to play a few friendly mini-games every day.
@@ -21,11 +21,11 @@ Just a calm place to play a few friendly mini-games every day.
 - 10 quick problems (mostly +/−, optional ×/÷)  
 - Giant keypad input  
 - Friendly feedback + optional voice praise  
-- **Hint / Skip** so grandpa never gets stuck
+- **Hint / Skip** so grandma never gets stuck
 
 ---
 
-## 🧓 Design principles (Grandpa-first)
+## 🧓 Design principles (Grandma-first)
 - **Readable**: oversized typography and high contrast  
 - **Touchable**: huge hit targets, minimal precision required  
 - **Unbreakable**: offline-friendly static assets, no fragile external links  
@@ -36,7 +36,7 @@ Just a calm place to play a few friendly mini-games every day.
 ## 🗂 Project structure
 
 ```text
-grandpa-arcade/
+grandma-arcade/
 ├─ public/
 │  └─ games/
 │     ├─ idiom/
@@ -107,6 +107,8 @@ This project is Vercel-friendly out of the box.
 - Static game pages under `/games/*`
 - SPA route refresh fallback to `/index.html`
 
+On iPad, you can get an even more app-like experience by opening the site in Safari and choosing “Add to Home Screen” so that **Grandma Arcade** runs full-screen without the browser chrome.
+
 ---
 
 ## 🧠 Idiom database format (`idioms.json`)
@@ -156,7 +158,7 @@ public/games/<game-id>/index.html
 - `id`, `title`, `hint`, `iconKey`
 - `url: "/games/<game-id>/"`
 
-3) Keep it grandpa-friendly:
+3) Keep it grandma-friendly:
 - big UI
 - clear feedback
 - no complex menus
@@ -167,4 +169,4 @@ public/games/<game-id>/index.html
 
 This is a love project.
 
-If it helps grandpa smile for even a minute, it’s already worth it.
+If it helps grandma smile for even a minute, it’s already worth it.

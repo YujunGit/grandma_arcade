@@ -68,7 +68,7 @@ export const GAMES_LIST = [
   },
   {
     id: "monkey-doodle",
-    title: "爷爷战猴子 COMING SOON",
+    title: "奶奶战猴子 COMING SOON",
     hint: "快乐涂鸦",
     iconKey: "monkey-doodle",
     iconClass: "text-pink-500",

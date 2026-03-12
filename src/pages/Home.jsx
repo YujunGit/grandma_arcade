@@ -1,17 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Sparkles } from "lucide-react";
-import { GAMES_LIST, GameIcon } from "../data/games";
+import { GAMES_LIST, GameIcon, getGameById } from "../data/games";
 import JellyStyles from "../components/JellyStyles";
 
 export default function Home() {
   const nav = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [lastGameId, setLastGameId] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("grandma_last_game");
+      if (stored) setLastGameId(stored);
+    } catch {
+      // 忽略：如隐私模式禁用 localStorage
+    }
+  }, []);
+
+  const lastGame = useMemo(
+    () => (lastGameId ? getGameById(lastGameId) : null),
+    [lastGameId]
+  );
 
   const formatTime = (date) =>
     date.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
@@ -23,7 +38,7 @@ export default function Home() {
       <header className="pt-20 pb-12 px-6 text-center">
         <h1 className="text-8xl md:text-[120px] font-black jelly-font mb-10 flex items-center justify-center gap-6">
           <Sparkles className="w-16 h-16 md:w-24 md:h-24 text-pink-300 fill-pink-200" />
-          爷爷的游戏厅
+          奶奶的游戏厅
         </h1>
 
         <div className="inline-block bg-white px-12 py-5 rounded-full border-4 border-pink-100 shadow-sm">
@@ -34,6 +49,20 @@ export default function Home() {
       </header>
 
       <main className="max-w-7xl mx-auto p-6 md:p-10">
+        {lastGame && (
+          <div className="mb-12 flex justify-center">
+            <button
+              onClick={() => nav(`/game/${lastGame.id}`)}
+              className="flex items-center gap-6 bg-pink-500 hover:bg-pink-400 active:bg-pink-600 text-white font-black px-10 py-6 rounded-[40px] border-b-[8px] border-pink-800 shadow-xl text-4xl md:text-5xl"
+            >
+              <span>继续上次玩的：</span>
+              <span className="underline decoration-yellow-200 decoration-[8px] underline-offset-8">
+                {lastGame.title}
+              </span>
+            </button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 md:gap-20">
           {GAMES_LIST.map((game) => (
             <button

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-  <title>爷爷的黄金矿工 - 会算账版</title>
+  <title>奶奶的黄金矿工 - 会算账版</title>
   <style> 
   #monkey-entrance{
   position:absolute;
@@ -156,7 +156,7 @@
       touch-action:none;
     }
 
-    /* 爷爷 & 猴子 */
+    /* 奶奶 & 猴子 */
     #miner-area{
       position:absolute;
       top: clamp(72px, 10vh, 110px);
@@ -176,7 +176,7 @@
       filter: drop-shadow(0 6px 0 rgba(0,0,0,0.2));
       transition: transform 0.15s;
     }
-    #grandpa{ margin-right:18px; position:relative; top:12px; }
+    #grandma{ margin-right:18px; position:relative; top:12px; }
     #monkey-dom{ font-size:clamp(48px, 5.5vw, 90px); opacity:0.92; transform:scaleX(-1); position:relative; bottom:6px; }
 
     /* 提示气泡（横屏 / 低高度自动隐藏） */
@@ -300,9 +300,9 @@
       </div>
     </div>
 
-    <div id="stage">
+        <div id="stage">
       <div id="miner-area">
-        <div class="char" id="grandpa">👴</div>
+        <div class="char" id="grandma">👵</div>
         <div style="position:absolute; bottom:0; width:190px; height:64px; background:#555; border-radius:16px; z-index:-1;"></div>
         <div class="char" id="monkey-dom">🐵</div>
       </div>
@@ -320,7 +320,7 @@
     <!-- Modal -->
     <div id="modal">
       <div class="modal-content" id="start-screen">
-        <h2>👴 爷爷的快乐矿工</h2>
+        <h2>👵 奶奶的快乐矿工</h2>
         <p>
           满地宝贝，慢慢抓！<br>
           分数会自动算好！<br>
@@ -342,7 +342,7 @@
 
       <div class="modal-content" id="pause-screen" style="display:none;">
         <h2>⏸ 已暂停</h2>
-        <p>休息一下，爷爷最棒。</p>
+        <p>休息一下，奶奶最棒。</p>
         <div class="row">
           <button class="btn good" id="resume-btn">继续玩</button>
           <button class="btn secondary" id="back-home-btn">重新开始</button>
@@ -373,7 +373,7 @@
   const btnResume = document.getElementById("resume-btn");
   const btnBackHome = document.getElementById("back-home-btn");
 
-  const elGrandpa = document.getElementById("grandpa");
+  const elGrandma = document.getElementById("grandma");
   const elMonkey = document.getElementById("monkey-dom");
 
   let width = 0, height = 0;
@@ -629,11 +629,11 @@
     if(gameState === STATE.IDLE){
       gameState = STATE.EXTEND;
       retractBoost = 1.0;
-      elGrandpa.style.transform = "translateY(-6px)";
-      setTimeout(()=> elGrandpa.style.transform="", 120);
+      elGrandma.style.transform = "translateY(-6px)";
+      setTimeout(()=> elGrandma.style.transform="", 120);
       return;
     }
-    // 让爷爷觉得“我还能操作”：二次点击加速回收
+    // 让奶奶觉得“我还能操作”：二次点击加速回收
     if(gameState === STATE.RETRACT){
       retractBoost = maxSpeedBoost;
       toast("🚀 加速收回！");
@@ -720,7 +720,7 @@
 
   // ✅ 出场字幕（夸张）
   const entrance = document.getElementById("monkey-entrance");
-  entrance.textContent = "🐵✨ 爷爷我来啦！！！";
+  entrance.textContent = "🐵✨ 奶奶我来啦！！！";
   entrance.style.display = "block";
   setTimeout(()=> entrance.style.display = "none", 1200);
 

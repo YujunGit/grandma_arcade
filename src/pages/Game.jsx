@@ -22,7 +22,7 @@ export default function Game() {
   }, []);
 
   useEffect(() => {
-    if (game) localStorage.setItem("grandpa_last_game", game.id);
+    if (game) localStorage.setItem("grandma_last_game", game.id);
   }, [game]);
 
   const formatTime = (date) =>
