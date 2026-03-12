@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+  <title>奶奶的推箱子</title>
+  <style>
+    :root{
+      --bg:#E0F7FA;
+      --wall:#004D40;
+      --floor:#B2EBF2;
+      --box:#FFB74D;
+      --target:#AED581;
+      --player:#5C6BC0;
+    }
+    *{ box-sizing:border-box; }
+    html,body{
+      margin:0;
+      padding:0;
+      font-family:"Microsoft YaHei",-apple-system,system-ui,sans-serif;
+      background:var(--bg);
+      min-height:100vh;
+      -webkit-user-select:none;
+      user-select:none;
+      touch-action:manipulation;
+    }
+    body{
+      padding:max(14px,env(safe-area-inset-top))
+              max(14px,env(safe-area-inset-right))
+              max(20px,env(safe-area-inset-bottom))
+              max(14px,env(safe-area-inset-left));
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+      text-align:center;
+    }
+    h1{
+      font-size:clamp(2.3rem,4vw,3.1rem);
+      color:#01579B;
+      margin:4px 0 0;
+      font-weight:900;
+    }
+    .subtitle{
+      font-size:clamp(1.4rem,2.6vw,1.9rem);
+      color:#0277BD;
+      font-weight:700;
+      opacity:0.85;
+    }
+    .board{
+      width:min(96vw,420px);
+      aspect-ratio:1/1;
+      background:#0097A7;
+      border-radius:26px;
+      padding:10px;
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      grid-template-rows:repeat(6,1fr);
+      gap:4px;
+      box-shadow:0 10px 22px rgba(0,0,0,0.25);
+      margin-top:10px;
+    }
+    .cell{
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2rem;
+    }
+    .wall{ background:var(--wall); }
+    .floor{ background:var(--floor); }
+    .target{ background:var(--target); }
+    .box{ background:var(--box); }
+    .box.target{ background:linear-gradient(135deg,var(--box),var(--target)); }
+    .player{
+      background:var(--player);
+      color:#fff;
+      font-weight:900;
+      font-size:2.2rem;
+    }
+    .controls{
+      margin-top:12px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+    }
+    .row{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      width:clamp(70px,16vw,90px);
+      height:clamp(70px,16vw,90px);
+      font-size:clamp(2.3rem,4.6vw,3.2rem);
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 7px 0 rgba(0,0,0,0.25);
+      background:#0288D1;
+      color:white;
+    }
+    .btn:active{
+      transform:translateY(7px);
+      box-shadow:none;
+      background:#0277BD;
+    }
+    .btn-small{
+      width:auto;
+      padding:10px 26px;
+      font-size:clamp(1.6rem,3vw,2.2rem);
+      background:#00796B;
+    }
+    .btn-small:active{ background:#00695C; }
+    .message{
+      margin-top:8px;
+      min-height:40px;
+      font-size:clamp(1.6rem,2.8vw,2rem);
+      font-weight:900;
+      color:#004D40;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>奶奶的推箱子</h1>
+    <div class="subtitle">只要把小箱子推到绿色格子里就赢了</div>
+  </header>
+
+  <div id="board" class="board" aria-label="推箱子棋盘"></div>
+
+  <div class="controls">
+    <div class="row">
+      <button class="btn" onclick="move(0,-1)">↑</button>
+    </div>
+    <div class="row">
+      <button class="btn" onclick="move(-1,0)">←</button>
+      <button class="btn" onclick="move(0,1)">↓</button>
+      <button class="btn" onclick="move(1,0)">→</button>
+    </div>
+    <div class="row">
+      <button class="btn btn-small" onclick="resetLevel()">重新开始 ↺</button>
+    </div>
+  </div>
+
+  <div id="msg" class="message"></div>
+
+  <script>
+    // 简化的 6x6 一关推箱子
+    // 符号：# 墙，. 地板，* 目标，$ 箱子，@ 奶奶
+    const LEVEL = [
+      "######",
+      "#..*.#",
+      "#.$..#",
+      "#.@..#",
+      "#....#",
+      "######",
+    ];
+
+    let grid = [];
+    let playerX = 0, playerY = 0;
+
+    function loadLevel() {
+      grid = LEVEL.map(row => row.split(""));
+      for (let y = 0; y < grid.length; y++) {
+        for (let x = 0; x < grid[y].length; x++) {
+          if (grid[y][x] === "@") {
+            playerX = x;
+            playerY = y;
+          }
+        }
+      }
+      render();
+      setMessage("慢慢来，把箱子推到绿色的位置。");
+    }
+
+    function render() {
+      const board = document.getElementById("board");
+      board.innerHTML = "";
+      for (let y = 0; y < grid.length; y++) {
+        for (let x = 0; x < grid[y].length; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          const ch = grid[y][x];
+          if (x === playerX && y === playerY) {
+            cell.classList.add("player");
+            cell.textContent = "奶";
+          } else if (ch === "#") {
+            cell.classList.add("wall");
+          } else if (ch === "*") {
+            cell.classList.add("target");
+          } else if (ch === "$") {
+            cell.classList.add("box");
+          } else if (ch === "+") {
+            cell.classList.add("box","target");
+          } else {
+            cell.classList.add("floor");
+          }
+          board.appendChild(cell);
+        }
+      }
+    }
+
+    function setMessage(text) {
+      const el = document.getElementById("msg");
+      el.textContent = text;
+    }
+
+    function isWall(x,y) {
+      const ch = grid[y][x];
+      return ch === "#";
+    }
+
+    function move(dx,dy) {
+      const nx = playerX + dx;
+      const ny = playerY + dy;
+      const target = grid[ny][nx];
+
+      if (target === "#" ) return; // 墙
+
+      // 箱子或在目标上的箱子
+      if (target === "$" || target === "+") {
+        const bx = nx + dx;
+        const by = ny + dy;
+        const beyond = grid[by][bx];
+        if (beyond === "#" || beyond === "$" || beyond === "+") {
+          return; // 前面堵住了
+        }
+
+        // 推箱子：处理目标格
+        if (target === "$") {
+          grid[ny][nx] = "."; // 箱子原地变回地板
+        } else if (target === "+") {
+          grid[ny][nx] = "*"; // 箱子离开目标，恢复目标
+        }
+
+        if (beyond === "*") {
+          grid[by][bx] = "+"; // 箱子推到目标
+        } else {
+          grid[by][bx] = "$";
+        }
+      }
+
+      // 移动奶奶
+      playerX = nx;
+      playerY = ny;
+      render();
+      checkWin();
+    }
+
+    function checkWin() {
+      // 胜利条件：没有单独的目标（*），都被箱子占住（+）
+      for (let y = 0; y < grid.length; y++) {
+        for (let x = 0; x < grid[y].length; x++) {
+          if (grid[y][x] === "*") return;
+        }
+      }
+      setMessage("🎉 太棒了！小箱子已经在正确位置啦！");
+    }
+
+    function resetLevel() {
+      loadLevel();
+    }
+
+    loadLevel();
+  </script>
+</body>
+</html>
+

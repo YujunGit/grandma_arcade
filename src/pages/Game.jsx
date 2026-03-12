@@ -13,6 +13,13 @@ export default function Game() {
   const { id } = useParams();
   const game = useMemo(() => getGameById(id), [id]);
 
+  const iframeSrc = useMemo(() => {
+    if (!game) return "";
+    // 在 dev 下，/games/foo/ 会被当成 SPA 路由；
+    // 这里显式指向静态 index.html，保证小游戏总是加载到。
+    return game.url.endsWith("/") ? `${game.url}index.html` : game.url;
+  }, [game]);
+
   const [currentTime, setCurrentTime] = useState(new Date());
   const containerRef = useRef(null);
 
@@ -145,7 +152,7 @@ export default function Game() {
       {/* Game area */}
       <div ref={containerRef} className="game-area flex-1 relative bg-slate-100">
         <iframe
-          src={game.url}
+          src={iframeSrc}
           className="absolute inset-0 w-full h-full border-none"
           title={game.title}
           allow="fullscreen; autoplay; gamepad"

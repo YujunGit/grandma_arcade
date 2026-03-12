@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+  <title>奶奶战猴子 · 快乐涂鸦</title>
+  <style>
+    :root{
+      --bg:#FFF3E0;
+      --canvas-bg:#FFFDE7;
+      --toolbar:#FFB74D;
+      --accent:#F4511E;
+    }
+    *{ box-sizing:border-box; }
+    html,body{
+      margin:0;
+      padding:0;
+      font-family:"Microsoft YaHei",-apple-system,system-ui,sans-serif;
+      background:var(--bg);
+      min-height:100vh;
+      -webkit-user-select:none;
+      user-select:none;
+      touch-action:manipulation;
+    }
+    body{
+      padding:max(14px,env(safe-area-inset-top))
+              max(14px,env(safe-area-inset-right))
+              max(20px,env(safe-area-inset-bottom))
+              max(14px,env(safe-area-inset-left));
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      text-align:center;
+    }
+    h1{
+      font-size:clamp(2.4rem,4.4vw,3.4rem);
+      color:#E64A19;
+      margin:4px 0 0;
+      font-weight:900;
+    }
+    .subtitle{
+      font-size:clamp(1.4rem,2.6vw,1.9rem);
+      color:#F57C00;
+      font-weight:700;
+      opacity:0.9;
+    }
+    .canvas-wrap{
+      width:min(96vw,900px);
+      aspect-ratio:4/3;
+      background:var(--canvas-bg);
+      border-radius:26px;
+      border:6px solid #FFCC80;
+      box-shadow:0 10px 22px rgba(0,0,0,0.18);
+      overflow:hidden;
+      position:relative;
+      margin-top:10px;
+    }
+    canvas{
+      width:100%;
+      height:100%;
+      touch-action:none;
+    }
+    .toolbar{
+      margin-top:10px;
+      width:min(96vw,900px);
+      background:var(--toolbar);
+      border-radius:26px;
+      padding:8px 12px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.15);
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:10px 22px;
+      font-size:clamp(1.6rem,2.8vw,2.1rem);
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 7px 0 rgba(0,0,0,0.25);
+      background:#FF7043;
+      color:white;
+    }
+    .btn:active{
+      transform:translateY(7px);
+      box-shadow:none;
+      background:#F4511E;
+    }
+    .color-dot{
+      width:clamp(34px,5vw,44px);
+      height:clamp(34px,5vw,44px);
+      border-radius:999px;
+      border:3px solid rgba(0,0,0,0.25);
+      cursor:pointer;
+      box-shadow:0 5px 0 rgba(0,0,0,0.18);
+    }
+    .message{
+      font-size:clamp(1.6rem,2.6vw,2rem);
+      font-weight:900;
+      color:#E64A19;
+      margin-top:6px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>奶奶战猴子 · 快乐涂鸦</h1>
+    <div class="subtitle">随便画、乱画都可以，玩得开心最重要</div>
+  </header>
+
+  <div class="canvas-wrap" aria-label="涂鸦画布">
+    <canvas id="pad"></canvas>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" onclick="clearCanvas()">一键擦掉 ↺</button>
+    <button class="btn" onclick="thinner()">画细一点</button>
+    <button class="btn" onclick="thicker()">画粗一点</button>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="color-dot" style="background:#000000" onclick="setColor('#000000')"></div>
+      <div class="color-dot" style="background:#E53935" onclick="setColor('#E53935')"></div>
+      <div class="color-dot" style="background:#3949AB" onclick="setColor('#3949AB')"></div>
+      <div class="color-dot" style="background:#00897B" onclick="setColor('#00897B')"></div>
+      <div class="color-dot" style="background:#FDD835" onclick="setColor('#FDD835')"></div>
+    </div>
+  </div>
+
+  <div id="msg" class="message">用手指在中间的大画布上慢慢画。</div>
+
+  <script>
+    const canvas = document.getElementById("pad");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+    let color = "#000000";
+    let size = 8;
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const { width, height } = rect;
+      const img = ctx.getImageData(0, 0, canvas.width || 1, canvas.height || 1);
+      canvas.width = width;
+      canvas.height = height;
+      ctx.fillStyle = "#FFFDE7";
+      ctx.fillRect(0, 0, width, height);
+      // 不做复杂缩放，重置就好
+    }
+
+    function setColor(c) {
+      color = c;
+      const msg = document.getElementById("msg");
+      msg.textContent = "换了新颜色，继续画吧。";
+    }
+
+    function thinner() {
+      size = Math.max(4, size - 2);
+      document.getElementById("msg").textContent = "现在线条更细一点。";
+    }
+
+    function thicker() {
+      size = Math.min(20, size + 2);
+      document.getElementById("msg").textContent = "现在线条更粗一点。";
+    }
+
+    function clearCanvas() {
+      ctx.fillStyle = "#FFFDE7";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      document.getElementById("msg").textContent = "已经帮奶奶擦干净啦，可以重新画。";
+    }
+
+    function getPos(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const e = evt.touches ? evt.touches[0] : evt;
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+    }
+
+    function startDraw(evt) {
+      evt.preventDefault();
+      drawing = true;
+      const p = getPos(evt);
+      lastX = p.x;
+      lastY = p.y;
+    }
+
+    function moveDraw(evt) {
+      if (!drawing) return;
+      evt.preventDefault();
+      const p = getPos(evt);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = size;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      lastX = p.x;
+      lastY = p.y;
+    }
+
+    function endDraw(evt) {
+      if (!drawing) return;
+      drawing = false;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    canvas.addEventListener("mousedown", startDraw);
+    canvas.addEventListener("mousemove", moveDraw);
+    canvas.addEventListener("mouseup", endDraw);
+    canvas.addEventListener("mouseleave", endDraw);
+
+    canvas.addEventListener("touchstart", startDraw, { passive: false });
+    canvas.addEventListener("touchmove", moveDraw, { passive: false });
+    canvas.addEventListener("touchend", endDraw, { passive: false });
+    canvas.addEventListener("touchcancel", endDraw, { passive: false });
+  </script>
+</body>
+</html>
+

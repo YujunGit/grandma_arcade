@@ -156,14 +156,15 @@
       touch-action:none;
     }
 
-    /* 奶奶 & 猴子 */
+    /* 奶奶 & 猴子：宽度随屏幕自适应，避免在窄屏或超宽屏下错位 */
     #miner-area{
       position:absolute;
       top: clamp(72px, 10vh, 110px);
       left:50%;
       transform:translateX(-50%);
-      width:360px;
-      height:120px;
+      width:clamp(220px, 40vw, 360px);
+      max-width:90vw;
+      height:clamp(90px, 16vh, 120px);
       display:flex;
       align-items:flex-end;
       justify-content:center;

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+  <title>奶奶的图形小游戏</title>
+  <style>
+    :root {
+      --bg: #F3E5F5;
+      --card: #ffffff;
+      --primary: #8E24AA;
+      --accent: #FFB300;
+      --text: #4A148C;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: "Microsoft YaHei", -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    body {
+      padding: max(14px, env(safe-area-inset-top))
+               max(14px, env(safe-area-inset-right))
+               max(20px, env(safe-area-inset-bottom))
+               max(14px, env(safe-area-inset-left));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(2.3rem, 4vw, 3.2rem);
+      color: var(--text);
+      margin: 6px 0 2px;
+      font-weight: 900;
+    }
+    .subtitle {
+      font-size: clamp(1.4rem, 2.6vw, 1.8rem);
+      color: #6A1B9A;
+      font-weight: 700;
+      opacity: 0.8;
+    }
+    .card {
+      width: min(96vw, 720px);
+      background: var(--card);
+      border-radius: 26px;
+      border: 5px solid #CE93D8;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+      padding: clamp(18px, 3vw, 26px);
+      margin-top: 8px;
+    }
+    .question {
+      font-size: clamp(1.8rem, 3.2vw, 2.3rem);
+      color: #5E35B1;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+    .shape-area {
+      display: flex;
+      justify-content: center;
+      padding: 18px 0 6px;
+    }
+    .shape {
+      width: clamp(160px, 38vw, 220px);
+      height: clamp(160px, 38vw, 220px);
+      background: #E1BEE7;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    /* 为了让形状一眼就能分清，这里直接用大号符号：○ △ ▭ */
+    .shape-inner {
+      width: 70%;
+      height: 70%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(72px, 12vw, 120px);
+      color: var(--primary);
+      background: none;
+    }
+    /* 只给长方形符号加粗边框，圆形/三角形保持原样 */
+    .shape-inner .rect-symbol {
+      font-weight: 900;
+      text-shadow:
+        -2px 0 0 var(--primary),
+         2px 0 0 var(--primary),
+         0 -2px 0 var(--primary),
+         0  2px 0 var(--primary),
+        -1px -1px 0 var(--primary),
+         1px -1px 0 var(--primary),
+        -1px  1px 0 var(--primary),
+         1px  1px 0 var(--primary);
+    }
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: clamp(14px, 2.5vw, 18px) clamp(28px, 4vw, 40px);
+      font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+      color: #fff;
+      background: #AB47BC;
+    }
+    .btn:active {
+      transform: translateY(7px);
+      box-shadow: none;
+      background: #9C27B0;
+    }
+    .btn-secondary {
+      background: #8D6E63;
+    }
+    .btn-secondary:active {
+      background: #6D4C41;
+    }
+    .message {
+      margin-top: 10px;
+      min-height: 40px;
+      font-size: clamp(1.6rem, 2.8vw, 2rem);
+      font-weight: 900;
+    }
+    .message.good { color: #2E7D32; }
+    .message.bad { color: #D32F2F; }
+    .bottom-row {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>奶奶的图形小游戏</h1>
+    <div class="subtitle">看看这是圆形、三角形，还是长方形</div>
+  </header>
+
+  <section class="card">
+    <div id="progress" class="question">第 1 题 / 共 10 题</div>
+
+    <div class="shape-area">
+      <div class="shape">
+        <div id="shape" class="shape-inner circle"></div>
+      </div>
+    </div>
+
+    <div class="question">这是什么形状？</div>
+
+    <div class="options">
+      <button class="btn" onclick="choose('circle')">圆形</button>
+      <button class="btn" onclick="choose('triangle')">三角形</button>
+      <button class="btn" onclick="choose('rectangle')">长方形</button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <div class="bottom-row">
+      <button class="btn-secondary btn" onclick="showHint()">提示一下 💡</button>
+      <button class="btn-secondary btn" onclick="next()">下一题 ➜</button>
+    </div>
+  </section>
+
+  <script>
+    const SHAPES = ["circle", "triangle", "rectangle"];
+    let currentShape = "circle";
+    let currentIndex = 0;
+    const total = 10;
+
+    function randomShape() {
+      const idx = Math.floor(Math.random() * SHAPES.length);
+      return SHAPES[idx];
+    }
+
+    function renderShape() {
+      const shapeEl = document.getElementById("shape");
+      shapeEl.className = "shape-inner";
+      // 用不同符号来代表不同图形，避免视觉误差
+      const symbol =
+        currentShape === "circle" ? "○" :
+        currentShape === "triangle" ? "△" : "▭";
+      shapeEl.textContent = "";
+      const span = document.createElement("span");
+      span.textContent = symbol;
+      if (currentShape === "rectangle") {
+        span.className = "rect-symbol";
+      }
+      shapeEl.appendChild(span);
+
+      const msg = document.getElementById("message");
+      msg.textContent = "";
+      msg.className = "message";
+      document.getElementById("progress").textContent =
+        "第 " + (currentIndex + 1) + " 题 / 共 " + total + " 题";
+    }
+
+    function choose(name) {
+      const msg = document.getElementById("message");
+      if (name === currentShape) {
+        msg.textContent = "🎉 回答对了！奶奶真厉害！";
+        msg.className = "message good";
+      } else {
+        msg.textContent = "再看看，可以按“提示一下”帮忙。";
+        msg.className = "message bad";
+      }
+    }
+
+    function showHint() {
+      const msg = document.getElementById("message");
+      msg.textContent = "答案是：" +
+        (currentShape === "circle" ? "圆形" :
+         currentShape === "triangle" ? "三角形" : "长方形");
+      msg.className = "message good";
+    }
+
+    function next() {
+      currentIndex++;
+      if (currentIndex >= total) {
+        const msg = document.getElementById("message");
+        msg.textContent = "今天的图形题全都看完啦，太棒了！";
+        msg.className = "message good";
+        currentIndex = total - 1;
+        return;
+      }
+      currentShape = randomShape();
+      renderShape();
+    }
+
+    // init
+    currentShape = randomShape();
+    renderShape();
+  </script>
+</body>
+</html>
+

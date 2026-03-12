@@ -35,7 +35,7 @@ export const GAMES_LIST = [
   },
   {
     id: "geometry",
-    title: "每日几何 COMING SOON",
+    title: "每日几何",
     hint: "认认图形",
     iconKey: "geometry",
     iconClass: "text-purple-500",
@@ -46,7 +46,7 @@ export const GAMES_LIST = [
   },
   {
     id: "sokoban",
-    title: "推箱子 COMING SOON",
+    title: "推箱子",
     hint: "力气活儿",
     iconKey: "sokoban",
     iconClass: "text-orange-500",
@@ -57,7 +57,7 @@ export const GAMES_LIST = [
   },
   {
     id: "miner",
-    title: "快乐矿工 COMING SOON",
+    title: "快乐矿工",
     hint: "挖大金子",
     iconKey: "miner",
     iconClass: "text-amber-500",
@@ -68,7 +68,7 @@ export const GAMES_LIST = [
   },
   {
     id: "monkey-doodle",
-    title: "奶奶战猴子 COMING SOON",
+    title: "奶奶战猴子",
     hint: "快乐涂鸦",
     iconKey: "monkey-doodle",
     iconClass: "text-pink-500",
